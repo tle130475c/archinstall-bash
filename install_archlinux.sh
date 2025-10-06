@@ -2,15 +2,7 @@
 
 set -euo pipefail
 
-root_password="<root_password>"
-username="<username>"
-realname="<realname>"
-user_password="<user_password>"
-hostname="<hostname>"
-
-disk_name="<disk_name>"
-partition_name="<partition_name>"
-luks_password="<luks_password>"
+source ./system_info.sh
 
 run_command_as_user() {
     local command="$1"
@@ -200,6 +192,7 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm docker docker-compose docker-b
 
 # Java
 arch-chroot /mnt pacman -Syu --needed --noconfirm jdk-openjdk openjdk-doc openjdk-src maven
+run_command_as_user "yay -Syu --needed --noconfirm jetbrains-toolbox"
 
 # Python
 arch-chroot /mnt pacman -Syu --needed --noconfirm python uv
@@ -217,3 +210,7 @@ run_command_as_user "yay -Syu --needed --noconfirm virtualbox-ext-oracle"
 # Disallow members of wheel group to execute any command without password
 linum=$(arch-chroot /mnt sed -n "/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL$/=" /etc/sudoers)
 arch-chroot /mnt sed -i "${linum}s/^/# /" /etc/sudoers
+
+# Clean GnuPG lock files
+run_command_as_user "rm -f /home/$username/.gnupg/public-keys.d/.#lk*"
+run_command_as_user "rm -f /home/$username/.gnupg/public-keys/pubring.db.lock"
