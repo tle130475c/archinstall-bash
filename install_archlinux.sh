@@ -191,8 +191,9 @@ run_command_as_user "yay -Syu --needed --noconfirm visual-studio-code-bin openre
 arch-chroot /mnt pacman -Syu --needed --noconfirm docker docker-compose docker-buildx minikube kubectl helm
 
 # Java
-arch-chroot /mnt pacman -Syu --needed --noconfirm jdk-openjdk openjdk-doc openjdk-src maven
+arch-chroot /mnt pacman -Syu --needed --noconfirm jdk-openjdk openjdk-doc openjdk-src maven gradle gradle-doc jdk21-openjdk
 run_command_as_user "yay -Syu --needed --noconfirm jetbrains-toolbox"
+arch-chroot /mnt archlinux-java set java-21-openjdk
 
 # Python
 arch-chroot /mnt pacman -Syu --needed --noconfirm python uv
