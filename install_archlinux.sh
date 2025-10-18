@@ -173,8 +173,8 @@ run_command_as_user "export GOCACHE='/home/$username/.cache/go-build' && cd /hom
 arch-chroot /mnt pacman -Syu --needed --noconfirm ttf-dejavu ttf-liberation noto-fonts-emoji ttf-cascadia-code ttf-fira-code ttf-roboto-mono ttf-hack noto-fonts-cjk
 
 # Web browsers
-arch-chroot /mnt pacman -Syu --needed --noconfirm torbrowser-launcher firefox-developer-edition chromium
-run_command_as_user "yay -Syu --needed --noconfirm vdhcoapp"
+arch-chroot /mnt pacman -Syu --needed --noconfirm torbrowser-launcher firefox-developer-edition
+run_command_as_user "yay -Syu --needed --noconfirm vdhcoapp google-chrome"
 
 # Tools
 arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools p7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors ntfs-3g gparted exfatprogs pdftk filezilla texlive texlive-lang krusader gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins
