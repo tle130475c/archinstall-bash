@@ -203,11 +203,6 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm nvm eslint prettier
 run_command_as_user "printf '\n## nvm configuration\n' >> /home/$username/.bashrc"
 run_command_as_user "printf 'source /usr/share/nvm/init-nvm.sh\n' >> /home/$username/.bashrc"
 
-# VirtualBox
-arch-chroot /mnt pacman -Syu --needed --noconfirm virtualbox virtualbox-guest-iso virtualbox-host-dkms
-arch-chroot /mnt usermod -aG vboxusers $username
-run_command_as_user "yay -Syu --needed --noconfirm virtualbox-ext-oracle"
-
 # Disallow members of wheel group to execute any command without password
 linum=$(arch-chroot /mnt sed -n "/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL$/=" /etc/sudoers)
 arch-chroot /mnt sed -i "${linum}s/^/# /" /etc/sudoers
