@@ -169,6 +169,10 @@ run_command_as_user "curl -LJo /home/$username/tmp/yay.tar.gz https://aur.archli
 run_command_as_user "tar -xvf /home/$username/tmp/yay.tar.gz -C /home/$username/tmp"
 run_command_as_user "export GOCACHE='/home/$username/.cache/go-build' && cd /home/$username/tmp/yay && makepkg -sri --noconfirm"
 
+# Install fcitx5 and Vietnamese input method
+arch-chroot /mnt pacman -Syu --needed --noconfirm fcitx5-bamboo fcitx5-configtool
+run_command_as_user "yay -Syu --needed --noconfirm gnome-shell-extension-kimpanel-git"
+
 # Fonts
 arch-chroot /mnt pacman -Syu --needed --noconfirm ttf-dejavu ttf-liberation noto-fonts-emoji ttf-cascadia-code ttf-fira-code ttf-roboto-mono ttf-hack noto-fonts-cjk
 
