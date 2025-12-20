@@ -109,7 +109,8 @@ arch-chroot /mnt sed -i "${linum}s/^# //" /etc/sudoers
 arch-chroot /mnt pacman -Syu --needed --noconfirm lvm2
 linum=$(arch-chroot /mnt sed -n "/^HOOKS=(.*)$/=" /etc/mkinitcpio.conf)
 arch-chroot /mnt sed -i "${linum}s/filesystems/filesystems resume/" /etc/mkinitcpio.conf
-arch-chroot /mnt sed -i "${linum}s/block/block encrypt lvm2/" /etc/mkinitcpio.conf
+arch-chroot /mnt sed -i "${linum}s/block/block sd-encrypt lvm2/" /etc/mkinitcpio.conf
+arch-chroot /mnt sed -i "${linum}s/keymap//" /etc/mkinitcpio.conf
 arch-chroot /mnt mkinitcpio -p linux
 
 # Configure systemd-boot loader
@@ -127,7 +128,7 @@ printf "title Arch Linux\n " > $boot_entry_filename
 printf "linux /vmlinuz-linux\n" >> $boot_entry_filename
 printf "initrd /intel-ucode.img\n" >> $boot_entry_filename
 printf "initrd /initramfs-linux.img\n" >> $boot_entry_filename
-printf "options cryptdevice=UUID=$(blkid -s UUID -o value /dev/${partition_name}3):encrypt-lvm root=/dev/vg-system/root resume=UUID=$(blkid -s UUID -o value /dev/vg-system/swap) rw\n" >> $boot_entry_filename
+printf "options rd.luks.name=$(blkid -s UUID -o value /dev/${partition_name}3)=encrypt-lvm root=/dev/vg-system/root resume=UUID=$(blkid -s UUID -o value /dev/vg-system/swap) rw\n" >> $boot_entry_filename
 
 # Install KVM
 arch-chroot /mnt pacman -Syu --needed --noconfirm virt-manager qemu-full vde2 dnsmasq bridge-utils virt-viewer dmidecode edk2-ovmf iptables-nft swtpm qemu-hw-usb-host qemu-block-gluster qemu-block-iscsi
