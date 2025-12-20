@@ -145,7 +145,7 @@ arch-chroot /mnt usermod -aG libvirt $username
 arch-chroot /mnt usermod -aG kvm $username
 
 # Install Intel packages
-arch-chroot /mnt pacman -Syu --needed --noconfirm mesa lib32-mesa ocl-icd lib32-ocl-icd intel-compute-runtime vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader intel-media-driver vpl-gpu-rt libva-utils intel-media-sdk sof-firmware
+arch-chroot /mnt pacman -Syu --needed --noconfirm mesa lib32-mesa ocl-icd lib32-ocl-icd intel-compute-runtime vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader intel-media-driver vpl-gpu-rt libva-utils sof-firmware
 
 # Install pipewire
 arch-chroot /mnt pacman -Syu --needed --noconfirm pipewire pipewire-audio pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire lib32-pipewire wireplumber
