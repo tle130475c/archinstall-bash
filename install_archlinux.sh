@@ -110,7 +110,7 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm lvm2
 linum=$(arch-chroot /mnt sed -n "/^HOOKS=(.*)$/=" /etc/mkinitcpio.conf)
 arch-chroot /mnt sed -i "${linum}s/filesystems/filesystems resume/" /etc/mkinitcpio.conf
 arch-chroot /mnt sed -i "${linum}s/block/block sd-encrypt lvm2/" /etc/mkinitcpio.conf
-arch-chroot /mnt sed -i "${linum}s/keymap//" /etc/mkinitcpio.conf
+arch-chroot /mnt sed -i "${linum}s/keymap //" /etc/mkinitcpio.conf
 arch-chroot /mnt mkinitcpio -p linux
 
 # Configure systemd-boot loader
