@@ -28,9 +28,9 @@ printf "Server = https://mirror-hk.koddos.net/archlinux/\$repo/os/\$arch\n" >> /
 # Create partitions
 sgdisk -Z /dev/$disk_name
 wipefs -a /dev/$disk_name
-sgdisk -n 0:0:+550M -t 0:ef00 -c 0:esp /dev/$disk_name
+sgdisk -n 0:0:+$esp_size -t 0:ef00 -c 0:esp /dev/$disk_name
 wipefs -a /dev/${partition_name}1
-sgdisk -n 0:0:+550M -t 0:ea00 -c 0:XBOOTLDR /dev/$disk_name
+sgdisk -n 0:0:+$xbootlrd_size -t 0:ea00 -c 0:XBOOTLDR /dev/$disk_name
 wipefs -a /dev/${partition_name}2
 sgdisk -n 0:0:0 -t 0:8309 -c 0:luks-encrypted /dev/$disk_name
 wipefs -a /dev/${partition_name}3
@@ -39,7 +39,7 @@ printf "$luks_password" | cryptsetup open /dev/${partition_name}3 encrypt-lvm -
 wipefs -a /dev/mapper/encrypt-lvm
 pvcreate /dev/mapper/encrypt-lvm
 vgcreate vg-system /dev/mapper/encrypt-lvm
-lvcreate -L 48G vg-system -n swap
+lvcreate -L $swap_size vg-system -n swap
 lvcreate -l +100%FREE vg-system -n root
 mkfs.vfat -F32 /dev/${partition_name}1
 mkfs.vfat -F32 /dev/${partition_name}2
@@ -69,6 +69,7 @@ arch-chroot /mnt hwclock --systohc
 # Configure localization
 printf "en_US.UTF-8 UTF-8\n" > /mnt/etc/locale.gen
 printf "LANG=en_US.UTF-8\n" > /mnt/etc/locale.conf
+printf "KEYMAP=us\n" > /mnt/etc/vconsole.conf
 arch-chroot /mnt locale-gen
 
 # Configure repository for 64-bit system
@@ -163,10 +164,9 @@ linum=$(arch-chroot /mnt sed -n "/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL$/=" /etc
 arch-chroot /mnt sed -i "${linum}s/^# //" /etc/sudoers
 
 # Install Yay AUR helper
-arch-chroot /mnt pacman -Syu --needed --noconfirm go
+arch-chroot /mnt pacman -Syu --needed --noconfirm go git
 run_command_as_user "mkdir /home/$username/tmp"
-run_command_as_user "curl -LJo /home/$username/tmp/yay.tar.gz https://aur.archlinux.org/cgit/aur.git/snapshot/yay.tar.gz"
-run_command_as_user "tar -xvf /home/$username/tmp/yay.tar.gz -C /home/$username/tmp"
+run_command_as_user "git clone https://aur.archlinux.org/yay.git /home/$username/tmp/yay"
 run_command_as_user "export GOCACHE='/home/$username/.cache/go-build' && cd /home/$username/tmp/yay && makepkg -sri --noconfirm"
 
 # Install fcitx5 and Vietnamese input method
