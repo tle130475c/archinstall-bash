@@ -115,7 +115,9 @@ arch-chroot /mnt mkinitcpio -p linux
 
 # Configure systemd-boot loader
 loader_filename="/mnt/efi/loader/loader.conf"
-arch-chroot /mnt pacman -Syu --needed --noconfirm efibootmgr intel-ucode
+arch-chroot /mnt pacman -Syu --needed --noconfirm efibootmgr
+arch-chroot /mnt pacman -Syu --needed --noconfirm intel-ucode
+# arch-chroot /mnt pacman -Syu --needed --noconfirm amd-ucode
 arch-chroot /mnt bootctl --esp-path=/efi --boot-path=/boot install
 printf "default archlinux\n" > $loader_filename
 printf "timeout 5\n" >> $loader_filename
@@ -127,6 +129,7 @@ boot_entry_filename="/mnt/boot/loader/entries/archlinux.conf"
 printf "title Arch Linux\n " > $boot_entry_filename
 printf "linux /vmlinuz-linux\n" >> $boot_entry_filename
 printf "initrd /intel-ucode.img\n" >> $boot_entry_filename
+# printf "initrd /amd-ucode.img\n" >> $boot_entry_filename
 printf "initrd /initramfs-linux.img\n" >> $boot_entry_filename
 printf "options rd.luks.name=$(blkid -s UUID -o value /dev/${partition_name}3)=encrypt-lvm root=/dev/vg-system/root resume=UUID=$(blkid -s UUID -o value /dev/vg-system/swap) rw\n" >> $boot_entry_filename
 
@@ -144,8 +147,14 @@ arch-chroot /mnt sed -i "${linum}s/^#//" $libvirtd_conf_file
 arch-chroot /mnt usermod -aG libvirt $username
 arch-chroot /mnt usermod -aG kvm $username
 
+# Install drivers
+arch-chroot /mnt pacman -Syu --needed --noconfirm mesa lib32-mesa ocl-icd lib32-ocl-icd vulkan-icd-loader lib32-vulkan-icd-loader libva-utils sof-firmware
+
 # Install Intel packages
-arch-chroot /mnt pacman -Syu --needed --noconfirm mesa lib32-mesa ocl-icd lib32-ocl-icd intel-compute-runtime vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader intel-media-driver vpl-gpu-rt libva-utils sof-firmware
+arch-chroot /mnt pacman -Syu --needed --noconfirm intel-compute-runtime vulkan-intel lib32-vulkan-intel intel-media-driver vpl-gpu-rt
+
+# # Install AMDGPU packages
+# arch-chroot /mnt pacman -Syu --needed --noconfirm vulkan-radeon lib32-vulkan-radeon rocm-opencl-runtime
 
 # Install pipewire
 arch-chroot /mnt pacman -Syu --needed --noconfirm pipewire pipewire-audio pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire lib32-pipewire wireplumber
@@ -155,7 +164,7 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm thermald
 arch-chroot /mnt systemctl enable thermald.service
 
 # Install GNOME Desktop Environment
-arch-chroot /mnt pacman -Syu --needed --noconfirm xorg-server baobab eog evince file-roller gdm gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-font-viewer gnome-keyring gnome-screenshot gnome-shell-extensions gnome-system-monitor ptyxis gnome-themes-extra gnome-video-effects nautilus sushi gnome-tweaks totem xdg-user-dirs-gtk gnome-usage endeavour dconf-editor gnome-shell-extension-appindicator alacarte gnome-text-editor gnome-sound-recorder seahorse seahorse-nautilus gnome-browser-connector xdg-desktop-portal xdg-desktop-portal-gnome gnome-disk-utility libappindicator-gtk3 transmission-gtk power-profiles-daemon gvfs-smb gvfs-google gvfs-mtp gvfs-nfs gnome-logs evolution evolution-ews evolution-on gnome-software gnome-boxes gnome-remote-desktop gnome-connections gedit gedit-plugins gnome-characters
+arch-chroot /mnt pacman -Syu --needed --noconfirm baobab eog evince file-roller gdm gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-font-viewer gnome-keyring gnome-screenshot gnome-shell-extensions gnome-system-monitor ptyxis gnome-themes-extra gnome-video-effects nautilus sushi gnome-tweaks totem xdg-user-dirs-gtk gnome-usage endeavour dconf-editor gnome-shell-extension-appindicator alacarte gnome-text-editor gnome-sound-recorder seahorse seahorse-nautilus gnome-browser-connector xdg-desktop-portal xdg-desktop-portal-gnome gnome-disk-utility libappindicator transmission-gtk power-profiles-daemon gvfs-smb gvfs-google gvfs-mtp gvfs-nfs gnome-logs evolution evolution-ews evolution-on gnome-software gnome-remote-desktop gnome-characters
 arch-chroot /mnt systemctl enable gdm.service
 arch-chroot /mnt systemctl enable bluetooth.service
 run_command_as_user "mkdir -p /home/$username/.config/environment.d"
@@ -182,7 +191,7 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm torbrowser-launcher firefox-de
 run_command_as_user "yay -Syu --needed --noconfirm vdhcoapp google-chrome"
 
 # Tools
-arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools p7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors ntfs-3g gparted exfatprogs pdftk filezilla texlive texlive-lang krusader gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins
+arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools p7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors ntfs-3g gparted exfatprogs pdftk texlive texlive-lang gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins
 run_command_as_user "yay -Syu --needed --noconfirm dislocker ventoy-bin"
 
 # Remote desktop
@@ -197,7 +206,6 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm docker docker-compose docker-b
 
 # Java
 arch-chroot /mnt pacman -Syu --needed --noconfirm jdk-openjdk openjdk-doc openjdk-src maven gradle gradle-doc
-run_command_as_user "yay -Syu --needed --noconfirm jetbrains-toolbox"
 
 # Python
 arch-chroot /mnt pacman -Syu --needed --noconfirm python uv
