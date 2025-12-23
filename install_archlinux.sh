@@ -212,6 +212,7 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm python uv
 
 # JavaScript
 arch-chroot /mnt pacman -Syu --needed --noconfirm nvm eslint prettier
+arch-chroot /mnt pacman -D --asexplicit nvm
 run_command_as_user "printf '\n## nvm configuration\n' >> /home/$username/.bashrc"
 run_command_as_user "printf 'source /usr/share/nvm/init-nvm.sh\n' >> /home/$username/.bashrc"
 
