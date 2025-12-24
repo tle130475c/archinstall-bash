@@ -198,7 +198,7 @@ run_command_as_user "yay -Syu --needed --noconfirm dislocker ventoy-bin"
 arch-chroot /mnt pacman -Syu --needed --noconfirm remmina freerdp
 
 # Programming tools
-arch-chroot /mnt pacman -Syu --needed --noconfirm git github-cli git-lfs kdiff3 valgrind kruler emacs-wayland bash-language-server azcopy azure-cli
+arch-chroot /mnt pacman -Syu --needed --noconfirm git github-cli git-lfs kdiff3 valgrind kruler emacs-wayland bash-language-server azcopy azure-cli zed
 run_command_as_user "yay -Syu --needed --noconfirm visual-studio-code-bin openrefine storageexplorer"
 
 # Docker
