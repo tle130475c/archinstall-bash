@@ -188,7 +188,7 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm ttf-dejavu ttf-liberation noto
 
 # Web browsers
 arch-chroot /mnt pacman -Syu --needed --noconfirm torbrowser-launcher firefox-developer-edition
-run_command_as_user "yay -Syu --needed --noconfirm vdhcoapp google-chrome"
+run_command_as_user "yay -Syu --needed --noconfirm google-chrome"
 
 # Tools
 arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools p7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors ntfs-3g gparted exfatprogs pdftk texlive texlive-lang gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins
@@ -212,7 +212,6 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm python uv
 
 # JavaScript
 arch-chroot /mnt pacman -Syu --needed --noconfirm nvm eslint prettier
-arch-chroot /mnt pacman -D --asexplicit nvm
 run_command_as_user "printf '\n## nvm configuration\n' >> /home/$username/.bashrc"
 run_command_as_user "printf 'source /usr/share/nvm/init-nvm.sh\n' >> /home/$username/.bashrc"
 
