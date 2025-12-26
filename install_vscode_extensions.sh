@@ -89,7 +89,6 @@ install_extension msjsdiag.vscode-react-native
 install_extension neo4j-extensions.neo4j-for-vscode
 install_extension oderwat.indent-rainbow
 install_extension okteto.remote-kubernetes
-install_extension pkief.material-icon-theme
 install_extension redhat.vscode-apache-camel
 install_extension redhat.vscode-community-server-connector
 install_extension redhat.vscode-quarkus
@@ -108,6 +107,7 @@ install_extension wmaurer.change-case
 install_extension yy0931.save-as-root
 install_extension yzane.markdown-pdf
 install_extension ztt25.azure-devops-boards-vscode
+install_extension anthropic.claude-code
 
 # Print summary
 echo ""
