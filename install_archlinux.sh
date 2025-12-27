@@ -109,6 +109,9 @@ printf "initrd /intel-ucode.img\n" >> $boot_entry_filename
 printf "initrd /initramfs-linux.img\n" >> $boot_entry_filename
 printf "options rd.luks.name=$(blkid -s UUID -o value /dev/${partition_name}3)=encrypt-lvm root=/dev/vg-system/root resume=UUID=$(blkid -s UUID -o value /dev/vg-system/swap) rw\n" >> $boot_entry_filename
 
+# # Create UEFI boot entry manually
+# arch-chroot /mnt efibootmgr --create --disk /dev/$disk_name --part 1 --loader '\EFI\systemd\systemd-bootx64.efi' --label "Linux Boot Manager" --unicode
+
 # Install KVM
 arch-chroot /mnt pacman -Syu --needed --noconfirm virt-manager qemu-full vde2 dnsmasq bridge-utils virt-viewer dmidecode edk2-ovmf iptables-nft swtpm qemu-hw-usb-host qemu-block-gluster qemu-block-iscsi
 
