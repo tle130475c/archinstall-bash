@@ -10,7 +10,7 @@ partition_name="<partition_name>"
 luks_password="<luks_password>"
 
 esp_size="1GiB"
-xbootlrd_size="1GiB"
+xbootldr_size="1GiB"
 swap_size="<swap_size>"
 
 root_password="<root_password>"

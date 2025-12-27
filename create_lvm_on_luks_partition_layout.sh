@@ -13,7 +13,7 @@ sgdisk -n 0:0:+$esp_size -t 0:ef00 -c 0:esp /dev/$disk_name
 wipefs -a /dev/${partition_name}1
 
 # Create XBOOTLDR partition
-sgdisk -n 0:0:+$xbootlrd_size -t 0:ea00 -c 0:XBOOTLDR /dev/$disk_name
+sgdisk -n 0:0:+$xbootldr_size -t 0:ea00 -c 0:XBOOTLDR /dev/$disk_name
 wipefs -a /dev/${partition_name}2
 
 # Create LUKS encrypted partition

@@ -5,7 +5,7 @@ set -euo pipefail
 source ./system_info.sh
 
 # Create XBOOTLDR partition
-sgdisk -n 0:0:+$xbootlrd_size -t 0:ea00 -c 0:XBOOTLDR /dev/$disk_name
+sgdisk -n 0:0:+$xbootldr_size -t 0:ea00 -c 0:XBOOTLDR /dev/$disk_name
 wipefs -a /dev/${partition_name}5
 
 # Create LUKS encrypted partition
