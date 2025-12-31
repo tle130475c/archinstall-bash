@@ -108,6 +108,7 @@ install_extension yy0931.save-as-root
 install_extension yzane.markdown-pdf
 install_extension ztt25.azure-devops-boards-vscode
 install_extension anthropic.claude-code
+install_extension pkief.material-icon-theme
 
 # Print summary
 echo ""
