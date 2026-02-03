@@ -113,7 +113,7 @@ printf "options rd.luks.name=$(blkid -s UUID -o value /dev/${partition_name}${lu
 # arch-chroot /mnt efibootmgr --create --disk /dev/$disk_name --part $esp_part_num --loader '\EFI\systemd\systemd-bootx64.efi' --label "Linux Boot Manager" --unicode
 
 # Install KVM
-arch-chroot /mnt pacman -Syu --needed --noconfirm virt-manager qemu-full vde2 dnsmasq bridge-utils virt-viewer dmidecode edk2-ovmf iptables-nft swtpm qemu-hw-usb-host qemu-block-gluster qemu-block-iscsi
+arch-chroot /mnt pacman -Syu --needed --noconfirm virt-manager qemu-full vde2 dnsmasq virt-viewer dmidecode edk2-ovmf iptables-nft swtpm qemu-hw-usb-host qemu-block-gluster qemu-block-iscsi
 
 arch-chroot /mnt systemctl enable libvirtd.service
 
