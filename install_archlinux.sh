@@ -92,8 +92,8 @@ arch-chroot /mnt mkinitcpio -p linux
 # Configure systemd-boot loader
 loader_filename="/mnt/efi/loader/loader.conf"
 arch-chroot /mnt pacman -Syu --needed --noconfirm efibootmgr
-arch-chroot /mnt pacman -Syu --needed --noconfirm intel-ucode
-# arch-chroot /mnt pacman -Syu --needed --noconfirm amd-ucode
+# arch-chroot /mnt pacman -Syu --needed --noconfirm intel-ucode
+arch-chroot /mnt pacman -Syu --needed --noconfirm amd-ucode
 arch-chroot /mnt bootctl --esp-path=/efi --boot-path=/boot install
 printf "default archlinux\n" > $loader_filename
 printf "timeout 5\n" >> $loader_filename
@@ -104,13 +104,13 @@ printf "editor no\n" >> $loader_filename
 boot_entry_filename="/mnt/boot/loader/entries/archlinux.conf"
 printf "title Arch Linux\n " > $boot_entry_filename
 printf "linux /vmlinuz-linux\n" >> $boot_entry_filename
-printf "initrd /intel-ucode.img\n" >> $boot_entry_filename
-# printf "initrd /amd-ucode.img\n" >> $boot_entry_filename
+# printf "initrd /intel-ucode.img\n" >> $boot_entry_filename
+printf "initrd /amd-ucode.img\n" >> $boot_entry_filename
 printf "initrd /initramfs-linux.img\n" >> $boot_entry_filename
 printf "options rd.luks.name=$(blkid -s UUID -o value /dev/${partition_name}${luks_part_num})=encrypt-lvm root=/dev/vg-system/root resume=UUID=$(blkid -s UUID -o value /dev/vg-system/swap) rw\n" >> $boot_entry_filename
 
-# # Create UEFI boot entry manually
-# arch-chroot /mnt efibootmgr --create --disk /dev/$disk_name --part $esp_part_num --loader '\EFI\systemd\systemd-bootx64.efi' --label "Linux Boot Manager" --unicode
+# Create UEFI boot entry manually
+arch-chroot /mnt efibootmgr --create --disk /dev/$disk_name --part $esp_part_num --loader '\EFI\systemd\systemd-bootx64.efi' --label "Linux Boot Manager" --unicode
 
 # Install KVM
 arch-chroot /mnt pacman -Syu --needed --noconfirm virt-manager qemu-full vde2 dnsmasq virt-viewer dmidecode edk2-ovmf iptables-nft swtpm qemu-hw-usb-host qemu-block-gluster qemu-block-iscsi
@@ -129,18 +129,18 @@ arch-chroot /mnt usermod -aG kvm $username
 # Install drivers
 arch-chroot /mnt pacman -Syu --needed --noconfirm mesa lib32-mesa ocl-icd lib32-ocl-icd vulkan-icd-loader lib32-vulkan-icd-loader libva-utils sof-firmware
 
-# Install Intel packages
-arch-chroot /mnt pacman -Syu --needed --noconfirm intel-compute-runtime vulkan-intel lib32-vulkan-intel intel-media-driver vpl-gpu-rt
+# # Install Intel packages
+# arch-chroot /mnt pacman -Syu --needed --noconfirm intel-compute-runtime vulkan-intel lib32-vulkan-intel intel-media-driver vpl-gpu-rt
 
-# # Install AMDGPU packages
-# arch-chroot /mnt pacman -Syu --needed --noconfirm vulkan-radeon lib32-vulkan-radeon rocm-opencl-runtime
+# Install AMDGPU packages
+arch-chroot /mnt pacman -Syu --needed --noconfirm vulkan-radeon lib32-vulkan-radeon rocm-opencl-runtime rocm-hip-runtime python-pytorch-opt-rocm
 
 # Install pipewire
 arch-chroot /mnt pacman -Syu --needed --noconfirm pipewire pipewire-audio pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire lib32-pipewire wireplumber
 
-# Install Thermald
-arch-chroot /mnt pacman -Syu --needed --noconfirm thermald
-arch-chroot /mnt systemctl enable thermald.service
+# # Install Thermald
+# arch-chroot /mnt pacman -Syu --needed --noconfirm thermald
+# arch-chroot /mnt systemctl enable thermald.service
 
 # Install GNOME Desktop Environment
 arch-chroot /mnt pacman -Syu --needed --noconfirm baobab eog evince file-roller gdm gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-font-viewer gnome-keyring gnome-screenshot gnome-shell-extensions gnome-system-monitor ptyxis gnome-themes-extra gnome-video-effects nautilus sushi gnome-tweaks totem xdg-user-dirs-gtk gnome-usage endeavour dconf-editor gnome-shell-extension-appindicator alacarte gnome-text-editor gnome-sound-recorder seahorse gnome-browser-connector xdg-desktop-portal xdg-desktop-portal-gnome gnome-disk-utility libappindicator transmission-gtk power-profiles-daemon gvfs-smb gvfs-google gvfs-mtp gvfs-nfs gnome-logs evolution evolution-ews evolution-on gnome-software gnome-remote-desktop gnome-characters
@@ -182,6 +182,8 @@ run_command_as_user "yay -Syu --needed --noconfirm visual-studio-code-bin openre
 
 # Docker
 arch-chroot /mnt pacman -Syu --needed --noconfirm docker docker-compose docker-buildx minikube kubectl helm
+arch-chroot /mnt systemctl enable docker.service
+arch-chroot /mnt usermod -aG docker $username
 
 # Java
 arch-chroot /mnt pacman -Syu --needed --noconfirm jdk-openjdk openjdk-doc openjdk-src maven gradle gradle-doc
