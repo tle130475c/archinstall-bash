@@ -170,14 +170,14 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm torbrowser-launcher firefox-de
 run_command_as_user "yay -Syu --needed --noconfirm google-chrome"
 
 # Tools
-arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools p7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors exfatprogs pdftk texlive texlive-lang gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins cdrtools
+arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools p7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors exfatprogs pdftk texlive texlive-lang gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins cdrtools gparted
 run_command_as_user "yay -Syu --needed --noconfirm ventoy-bin"
 
 # Remote desktop
 arch-chroot /mnt pacman -Syu --needed --noconfirm remmina freerdp
 
 # Programming tools
-arch-chroot /mnt pacman -Syu --needed --noconfirm git github-cli git-lfs kdiff3 valgrind kruler emacs-wayland bash-language-server azcopy azure-cli zed jq
+arch-chroot /mnt pacman -Syu --needed --noconfirm git github-cli git-lfs kdiff3 valgrind kruler emacs-wayland bash-language-server azcopy azure-cli zed jq dbeaver
 run_command_as_user "yay -Syu --needed --noconfirm visual-studio-code-bin openrefine storageexplorer"
 
 # Docker
