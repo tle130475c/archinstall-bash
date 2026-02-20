@@ -66,7 +66,7 @@ arch-chroot /mnt systemctl enable NetworkManager.service
 printf "%s\n%s\n" "$root_password" "$root_password" | arch-chroot /mnt passwd
 
 # Create a new user
-arch-chroot /mnt useradd -G wheel,audio,lp,optical,storage,disk,video,power -s /bin/bash -m $username -d /home/$username -c "$realname"
+arch-chroot /mnt useradd -G wheel,audio,lp,optical,storage,disk,video,power,render -s /bin/bash -m $username -d /home/$username -c "$realname"
 printf "%s\n%s\n" "$user_password" "$user_password" | arch-chroot /mnt passwd $username
 
 # Disable sudo password prompt timeout
