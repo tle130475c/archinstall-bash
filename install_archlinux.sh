@@ -151,9 +151,15 @@ arch-chroot /mnt pacman -Syu --needed --noconfirm pipewire pipewire-audio pipewi
 # arch-chroot /mnt pacman -Syu --needed --noconfirm thermald
 # arch-chroot /mnt systemctl enable thermald.service
 
-# Install GNOME Desktop Environment
-arch-chroot /mnt pacman -Syu --needed --noconfirm baobab eog evince file-roller gdm gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-font-viewer gnome-keyring gnome-screenshot gnome-shell-extensions gnome-system-monitor ptyxis gnome-themes-extra gnome-video-effects nautilus sushi gnome-tweaks totem xdg-user-dirs-gtk gnome-usage endeavour dconf-editor gnome-shell-extension-appindicator alacarte gnome-text-editor gnome-sound-recorder seahorse gnome-browser-connector xdg-desktop-portal xdg-desktop-portal-gnome gnome-disk-utility libappindicator transmission-gtk power-profiles-daemon gvfs-smb gvfs-google gvfs-mtp gvfs-nfs gnome-logs evolution evolution-ews evolution-on gnome-software gnome-remote-desktop gnome-characters
-arch-chroot /mnt systemctl enable gdm.service
+# # Install GNOME Desktop Environment
+# arch-chroot /mnt pacman -Syu --needed --noconfirm baobab eog evince file-roller gdm gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-font-viewer gnome-keyring gnome-screenshot gnome-shell-extensions gnome-system-monitor ptyxis gnome-themes-extra gnome-video-effects nautilus sushi gnome-tweaks totem xdg-user-dirs-gtk gnome-usage endeavour dconf-editor gnome-shell-extension-appindicator alacarte gnome-text-editor gnome-sound-recorder seahorse gnome-browser-connector xdg-desktop-portal xdg-desktop-portal-gnome gnome-disk-utility libappindicator transmission-gtk power-profiles-daemon gvfs-smb gvfs-google gvfs-mtp gvfs-nfs gnome-logs evolution evolution-ews evolution-on gnome-software gnome-remote-desktop gnome-characters
+# arch-chroot /mnt systemctl enable gdm.service
+# arch-chroot /mnt systemctl enable bluetooth.service
+# run_command_as_user "mkdir -p /home/$username/.config/environment.d"
+
+# Install KDE Plasma
+arch-chroot /mnt pacman -Syu --needed --noconfirm plasma-desktop ark dolphin dolphin-plugins kate konsole kdegraphics-thumbnailers ffmpegthumbs spectacle gwenview bluedevil kinfocenter kscreen plasma-firewall plasma-nm plasma-pa plasma-systemmonitor powerdevil sddm-kcm okular kcalc yakuake cryfs plasma-vault discover breeze-gtk kde-gtk-config gnome-keyring krusader kwalletmanager krename khelpcenter xdg-desktop-portal-kde ktorrent gnome-disk-utility power-profiles-daemon plasma-workspace-wallpapers filelight
+arch-chroot /mnt systemctl enable sddm.service
 arch-chroot /mnt systemctl enable bluetooth.service
 run_command_as_user "mkdir -p /home/$username/.config/environment.d"
 
@@ -169,7 +175,8 @@ run_command_as_user "export GOCACHE='/home/$username/.cache/go-build' && cd /hom
 
 # Install fcitx5 and Vietnamese input method
 arch-chroot /mnt pacman -Syu --needed --noconfirm fcitx5-bamboo fcitx5-configtool
-run_command_as_user "yay -Syu --needed --noconfirm gnome-shell-extension-kimpanel-git"
+# run_command_as_user "yay -Syu --needed --noconfirm gnome-shell-extension-kimpanel-git"
+run_command_as_user "printf 'XMODIFIERS=@im=fcitx\n' > /home/$username/.config/environment.d/fcitx5.conf"
 
 # Fonts
 arch-chroot /mnt pacman -Syu --needed --noconfirm ttf-dejavu ttf-liberation noto-fonts-emoji ttf-cascadia-code ttf-fira-code ttf-roboto-mono ttf-hack noto-fonts-cjk
