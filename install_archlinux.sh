@@ -9,6 +9,26 @@ run_command_as_user() {
     arch-chroot -u "$username" /mnt bash -c "export HOME=/home/$username && $command"
 }
 
+retry() {
+    local max_attempts=5
+    local delay=30
+    local attempt=1
+    while true; do
+        "$@" && return 0
+        if ((attempt >= max_attempts)); then
+            printf "Command failed after %d attempts: %s\n" "$max_attempts" "$*" >&2
+            return 1
+        fi
+        printf "Attempt %d/%d failed. Retrying in %ds...\n" "$attempt" "$max_attempts" "$delay" >&2
+        ((attempt++))
+        sleep "$delay"
+    done
+}
+
+retry_as_user() {
+    retry run_command_as_user "$1"
+}
+
 # Waiting for keyring to be initialized
 systemctl start archlinux-keyring-wkd-sync.timer
 sleep 30
@@ -29,7 +49,7 @@ printf "Server = https://mirror-hk.koddos.net/archlinux/\$repo/os/\$arch\n" >> /
 source ./create_lvm_on_luks_partition_layout.sh
 
 # Install essential packages
-pacstrap /mnt base base-devel linux linux-headers linux-lts linux-lts-headers linux-zen linux-zen-headers linux-firmware man-pages man-db iptables-nft pipewire pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire wireplumber bash-completion nfs-utils gvim
+retry pacstrap /mnt base base-devel linux linux-headers linux-lts linux-lts-headers linux-zen linux-zen-headers linux-firmware man-pages man-db iptables-nft pipewire pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire wireplumber bash-completion nfs-utils gvim
 
 # Disable makepkg debug
 linum=$(arch-chroot /mnt sed -n "/^OPTIONS=(.*)$/=" /etc/makepkg.conf)
@@ -59,7 +79,7 @@ printf "$hostname\n" > /mnt/etc/hostname
 printf "127.0.0.1\tlocalhost\n" > /mnt/etc/hosts
 printf "::1\tlocalhost\n" >> /mnt/etc/hosts
 printf "127.0.1.1\t%s.localdomain\t%s\n" "$hostname" "$hostname" >> /mnt/etc/hosts
-arch-chroot /mnt pacman -Syu --needed --noconfirm networkmanager
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm networkmanager
 arch-chroot /mnt systemctl enable NetworkManager.service
 
 # Set root password
@@ -82,7 +102,7 @@ linum=$(arch-chroot /mnt sed -n "/^# %wheel ALL=(ALL:ALL) ALL$/=" /etc/sudoers)
 arch-chroot /mnt sed -i "${linum}s/^# //" /etc/sudoers
 
 # Configure mkinitcpio
-arch-chroot /mnt pacman -Syu --needed --noconfirm lvm2
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm lvm2
 linum=$(arch-chroot /mnt sed -n "/^HOOKS=(.*)$/=" /etc/mkinitcpio.conf)
 arch-chroot /mnt sed -i "${linum}s/filesystems/filesystems resume/" /etc/mkinitcpio.conf
 arch-chroot /mnt sed -i "${linum}s/block/block sd-encrypt lvm2/" /etc/mkinitcpio.conf
@@ -91,9 +111,9 @@ arch-chroot /mnt mkinitcpio -p linux
 
 # Configure systemd-boot loader
 loader_filename="/mnt/efi/loader/loader.conf"
-arch-chroot /mnt pacman -Syu --needed --noconfirm efibootmgr
-# arch-chroot /mnt pacman -Syu --needed --noconfirm intel-ucode
-arch-chroot /mnt pacman -Syu --needed --noconfirm amd-ucode
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm efibootmgr
+# retry arch-chroot /mnt pacman -Syu --needed --noconfirm intel-ucode
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm amd-ucode
 arch-chroot /mnt bootctl --esp-path=/efi --boot-path=/boot install
 printf "default archlinux\n" > $loader_filename
 printf "timeout 5\n" >> $loader_filename
@@ -131,7 +151,7 @@ printf "options rd.luks.name=$(blkid -s UUID -o value /dev/${partition_name}${lu
 arch-chroot /mnt efibootmgr --create --disk /dev/$disk_name --part $esp_part_num --loader '\EFI\systemd\systemd-bootx64.efi' --label "Linux Boot Manager" --unicode
 
 # Install KVM
-arch-chroot /mnt pacman -Syu --needed --noconfirm virt-manager qemu-full vde2 dnsmasq virt-viewer dmidecode edk2-ovmf iptables-nft swtpm qemu-hw-usb-host qemu-block-gluster qemu-block-iscsi
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm virt-manager qemu-full vde2 dnsmasq virt-viewer dmidecode edk2-ovmf iptables-nft swtpm qemu-hw-usb-host qemu-block-gluster qemu-block-iscsi
 
 arch-chroot /mnt systemctl enable libvirtd.service
 
@@ -145,29 +165,29 @@ arch-chroot /mnt usermod -aG libvirt $username
 arch-chroot /mnt usermod -aG kvm $username
 
 # Install drivers
-arch-chroot /mnt pacman -Syu --needed --noconfirm mesa lib32-mesa ocl-icd lib32-ocl-icd vulkan-icd-loader lib32-vulkan-icd-loader libva-utils sof-firmware
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm mesa lib32-mesa ocl-icd lib32-ocl-icd vulkan-icd-loader lib32-vulkan-icd-loader libva-utils sof-firmware
 
 # # Install Intel packages
-# arch-chroot /mnt pacman -Syu --needed --noconfirm intel-compute-runtime vulkan-intel lib32-vulkan-intel intel-media-driver vpl-gpu-rt
+# retry arch-chroot /mnt pacman -Syu --needed --noconfirm intel-compute-runtime vulkan-intel lib32-vulkan-intel intel-media-driver vpl-gpu-rt
 
 # Install AMDGPU packages
-arch-chroot /mnt pacman -Syu --needed --noconfirm vulkan-radeon lib32-vulkan-radeon rocm-opencl-runtime rocm-hip-runtime python-pytorch-opt-rocm
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm vulkan-radeon lib32-vulkan-radeon rocm-opencl-runtime rocm-hip-runtime python-pytorch-opt-rocm
 
 # Install pipewire
-arch-chroot /mnt pacman -Syu --needed --noconfirm pipewire pipewire-audio pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire lib32-pipewire wireplumber
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm pipewire pipewire-audio pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire lib32-pipewire wireplumber
 
 # # Install Thermald
-# arch-chroot /mnt pacman -Syu --needed --noconfirm thermald
+# retry arch-chroot /mnt pacman -Syu --needed --noconfirm thermald
 # arch-chroot /mnt systemctl enable thermald.service
 
 # Install GNOME Desktop Environment
-arch-chroot /mnt pacman -Syu --needed --noconfirm baobab eog evince file-roller gdm gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-font-viewer gnome-keyring gnome-screenshot gnome-shell-extensions gnome-system-monitor gnome-console gnome-themes-extra gnome-video-effects nautilus sushi gnome-tweaks totem xdg-user-dirs-gtk gnome-usage endeavour dconf-editor gnome-shell-extension-appindicator alacarte gnome-text-editor gnome-sound-recorder seahorse gnome-browser-connector xdg-desktop-portal xdg-desktop-portal-gnome gnome-disk-utility libappindicator transmission-gtk power-profiles-daemon gvfs-smb gvfs-google gvfs-mtp gvfs-nfs gnome-logs evolution evolution-ews evolution-on gnome-software gnome-remote-desktop gnome-characters
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm baobab eog evince file-roller gdm gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-font-viewer gnome-keyring gnome-screenshot gnome-shell-extensions gnome-system-monitor gnome-console gnome-themes-extra gnome-video-effects nautilus sushi gnome-tweaks totem xdg-user-dirs-gtk gnome-usage endeavour dconf-editor gnome-shell-extension-appindicator alacarte gnome-text-editor gnome-sound-recorder seahorse gnome-browser-connector xdg-desktop-portal xdg-desktop-portal-gnome gnome-disk-utility libappindicator transmission-gtk power-profiles-daemon gvfs-smb gvfs-google gvfs-mtp gvfs-nfs gnome-logs evolution evolution-ews evolution-on gnome-software gnome-remote-desktop gnome-characters
 arch-chroot /mnt systemctl enable gdm.service
 arch-chroot /mnt systemctl enable bluetooth.service
 run_command_as_user "mkdir -p /home/$username/.config/environment.d"
 
 # # Install KDE Plasma
-# arch-chroot /mnt pacman -Syu --needed --noconfirm plasma-desktop ark dolphin dolphin-plugins kate konsole kdegraphics-thumbnailers ffmpegthumbs spectacle gwenview bluedevil kinfocenter kscreen plasma-firewall plasma-nm plasma-pa plasma-systemmonitor powerdevil sddm-kcm okular kcalc yakuake cryfs plasma-vault discover breeze-gtk kde-gtk-config gnome-keyring krusader kwalletmanager krename khelpcenter xdg-desktop-portal-kde ktorrent gnome-disk-utility power-profiles-daemon plasma-workspace-wallpapers filelight
+# retry arch-chroot /mnt pacman -Syu --needed --noconfirm plasma-desktop ark dolphin dolphin-plugins kate konsole kdegraphics-thumbnailers ffmpegthumbs spectacle gwenview bluedevil kinfocenter kscreen plasma-firewall plasma-nm plasma-pa plasma-systemmonitor powerdevil sddm-kcm okular kcalc yakuake cryfs plasma-vault discover breeze-gtk kde-gtk-config gnome-keyring krusader kwalletmanager krename khelpcenter xdg-desktop-portal-kde ktorrent gnome-disk-utility power-profiles-daemon plasma-workspace-wallpapers filelight
 # arch-chroot /mnt systemctl enable sddm.service
 # arch-chroot /mnt systemctl enable bluetooth.service
 # run_command_as_user "mkdir -p /home/$username/.config/environment.d"
@@ -177,47 +197,47 @@ linum=$(arch-chroot /mnt sed -n "/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL$/=" /etc
 arch-chroot /mnt sed -i "${linum}s/^# //" /etc/sudoers
 
 # Install Yay AUR helper
-arch-chroot /mnt pacman -Syu --needed --noconfirm go git
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm go git
 run_command_as_user "mkdir /home/$username/tmp"
 run_command_as_user "git clone https://aur.archlinux.org/yay.git /home/$username/tmp/yay"
 run_command_as_user "export GOCACHE='/home/$username/.cache/go-build' && cd /home/$username/tmp/yay && makepkg -sri --noconfirm"
 
 # Install fcitx5 and Vietnamese input method
-arch-chroot /mnt pacman -Syu --needed --noconfirm fcitx5-bamboo fcitx5-configtool
-run_command_as_user "yay -Syu --needed --noconfirm gnome-shell-extension-kimpanel-git"
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm fcitx5-bamboo fcitx5-configtool
+retry_as_user "yay -Syu --needed --noconfirm gnome-shell-extension-kimpanel-git"
 # run_command_as_user "printf 'XMODIFIERS=@im=fcitx\n' > /home/$username/.config/environment.d/fcitx5.conf"
 
 # Fonts
-arch-chroot /mnt pacman -Syu --needed --noconfirm ttf-dejavu ttf-liberation noto-fonts-emoji ttf-cascadia-code ttf-fira-code ttf-roboto-mono ttf-hack noto-fonts-cjk
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm ttf-dejavu ttf-liberation noto-fonts-emoji ttf-cascadia-code ttf-fira-code ttf-roboto-mono ttf-hack noto-fonts-cjk
 
 # Web browsers
-arch-chroot /mnt pacman -Syu --needed --noconfirm torbrowser-launcher firefox-developer-edition
-run_command_as_user "yay -Syu --needed --noconfirm google-chrome"
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm torbrowser-launcher firefox-developer-edition
+retry_as_user "yay -Syu --needed --noconfirm google-chrome"
 
 # Tools
-arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools 7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors exfatprogs pdftk texlive texlive-lang gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins cdrtools gparted lftp
-run_command_as_user "yay -Syu --needed --noconfirm ventoy-bin"
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools 7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors exfatprogs pdftk texlive texlive-lang gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins cdrtools gparted lftp
+retry_as_user "yay -Syu --needed --noconfirm ventoy-bin"
 
 # Remote desktop
-arch-chroot /mnt pacman -Syu --needed --noconfirm remmina freerdp
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm remmina freerdp
 
 # Programming tools
-arch-chroot /mnt pacman -Syu --needed --noconfirm git github-cli git-lfs kdiff3 valgrind kruler emacs-wayland bash-language-server azcopy azure-cli zed jq dbeaver
-run_command_as_user "yay -Syu --needed --noconfirm visual-studio-code-bin openrefine storageexplorer"
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm git github-cli git-lfs kdiff3 valgrind kruler emacs-wayland bash-language-server azcopy azure-cli zed jq dbeaver
+retry_as_user "yay -Syu --needed --noconfirm visual-studio-code-bin openrefine"
 
 # Docker
-arch-chroot /mnt pacman -Syu --needed --noconfirm docker docker-compose docker-buildx minikube kubectl helm
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm docker docker-compose docker-buildx minikube kubectl helm
 arch-chroot /mnt systemctl enable docker.service
 arch-chroot /mnt usermod -aG docker $username
 
 # Java
-arch-chroot /mnt pacman -Syu --needed --noconfirm jdk-openjdk openjdk-doc openjdk-src maven gradle gradle-doc
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm jdk-openjdk openjdk-doc openjdk-src maven gradle gradle-doc
 
 # Python
-arch-chroot /mnt pacman -Syu --needed --noconfirm python uv
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm python uv
 
 # JavaScript
-arch-chroot /mnt pacman -Syu --needed --noconfirm nvm eslint prettier
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm nvm eslint prettier
 run_command_as_user "printf '\n## nvm configuration\n' >> /home/$username/.bashrc"
 run_command_as_user "printf 'source /usr/share/nvm/init-nvm.sh\n' >> /home/$username/.bashrc"
 
