@@ -29,7 +29,7 @@ printf "Server = https://mirror-hk.koddos.net/archlinux/\$repo/os/\$arch\n" >> /
 source ./create_lvm_on_luks_partition_layout.sh
 
 # Install essential packages
-pacstrap /mnt base base-devel linux linux-headers linux-lts linux-lts-headers linux-firmware man-pages man-db iptables-nft pipewire pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire wireplumber bash-completion nfs-utils gvim
+pacstrap /mnt base base-devel linux linux-headers linux-lts linux-lts-headers linux-zen linux-zen-headers linux-firmware man-pages man-db iptables-nft pipewire pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire wireplumber bash-completion nfs-utils gvim
 
 # Disable makepkg debug
 linum=$(arch-chroot /mnt sed -n "/^OPTIONS=(.*)$/=" /etc/makepkg.conf)
@@ -116,6 +116,15 @@ printf "linux /vmlinuz-linux-lts\n" >> $boot_entry_filename
 # printf "initrd /intel-ucode.img\n" >> $boot_entry_filename
 printf "initrd /amd-ucode.img\n" >> $boot_entry_filename
 printf "initrd /initramfs-linux-lts.img\n" >> $boot_entry_filename
+printf "options rd.luks.name=$(blkid -s UUID -o value /dev/${partition_name}${luks_part_num})=encrypt-lvm root=/dev/vg-system/root resume=UUID=$(blkid -s UUID -o value /dev/vg-system/swap) rw\n" >> $boot_entry_filename
+
+# Add systemd-boot boot entries for Zen kernel
+boot_entry_filename="/mnt/boot/loader/entries/archlinux-zen.conf"
+printf "title Arch Linux Zen\n " > $boot_entry_filename
+printf "linux /vmlinuz-linux-zen\n" >> $boot_entry_filename
+# printf "initrd /intel-ucode.img\n" >> $boot_entry_filename
+printf "initrd /amd-ucode.img\n" >> $boot_entry_filename
+printf "initrd /initramfs-linux-zen.img\n" >> $boot_entry_filename
 printf "options rd.luks.name=$(blkid -s UUID -o value /dev/${partition_name}${luks_part_num})=encrypt-lvm root=/dev/vg-system/root resume=UUID=$(blkid -s UUID -o value /dev/vg-system/swap) rw\n" >> $boot_entry_filename
 
 # Create UEFI boot entry manually
