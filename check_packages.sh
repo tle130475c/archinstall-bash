@@ -92,6 +92,9 @@ for entry in "${pacman_entries[@]}"; do
     if pacman -Si "$pkg" &>/dev/null 2>&1; then
         echo -e "${GREEN}[  OK  ]${NC}"
         ((pacman_ok++)) || true
+    elif pacman -Sg "$pkg" &>/dev/null 2>&1; then
+        echo -e "${GREEN}[  OK  ]${NC}  (group)"
+        ((pacman_ok++)) || true
     else
         echo -e "${RED}[MISSING]${NC}  (line $linenum)"
         ((pacman_fail++)) || true
