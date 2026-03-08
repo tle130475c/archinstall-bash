@@ -14,7 +14,5 @@
   "java.referencesCodeLens.enabled": true,
   "java.configuration.updateBuildConfiguration": "automatic",
   "workbench.startupEditor": "none",
-  "redhat.telemetry.enabled": false,
-  "editor.fontSize": 16,
-  "editor.fontFamily": "'Adwaita Mono', 'Cascadia Mono', 'Droid Sans Mono', 'monospace', monospace"
+  "redhat.telemetry.enabled": false
 }
