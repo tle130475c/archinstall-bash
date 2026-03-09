@@ -36,6 +36,7 @@ function Install-VscodeExtension {
 
 # Install extensions
 Install-VscodeExtension angular.ng-template
+Install-VscodeExtension anthropic.claude-code
 Install-VscodeExtension bdavs.expect
 Install-VscodeExtension bmewburn.vscode-intelephense-client
 Install-VscodeExtension celianriboulet.webvalidator

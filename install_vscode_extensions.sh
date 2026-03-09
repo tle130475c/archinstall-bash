@@ -44,6 +44,7 @@ install_extension() {
 
 # Install extensions
 install_extension angular.ng-template
+install_extension anthropic.claude-code
 install_extension bdavs.expect
 install_extension bmewburn.vscode-intelephense-client
 install_extension celianriboulet.webvalidator
