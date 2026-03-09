@@ -227,7 +227,7 @@ log "Installing remote desktop tools"
 retry arch-chroot /mnt pacman -Syu --needed --noconfirm remmina freerdp
 
 log "Installing programming tools"
-retry arch-chroot /mnt pacman -Syu --needed --noconfirm git github-cli git-lfs kdiff3 valgrind kruler emacs-wayland bash-language-server azcopy azure-cli zed jq dbeaver
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm git github-cli git-lfs kdiff3 valgrind kruler emacs-wayland bash-language-server azcopy azure-cli aws-cli-v2 zed jq dbeaver
 retry_as_user "yay -Syu --needed --noconfirm visual-studio-code-bin openrefine"
 
 log "Installing Docker"
