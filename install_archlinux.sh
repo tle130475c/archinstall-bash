@@ -221,7 +221,7 @@ retry_as_user "yay -Syu --needed --noconfirm google-chrome"
 
 log "Installing general tools"
 retry arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools 7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors exfatprogs pdftk texlive texlive-lang gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins cdrtools gparted lftp
-retry_as_user "yay -Syu --needed --noconfirm ventoy-bin"
+retry_as_user "yay -Syu --needed --noconfirm ventoy-bin virtio-win"
 
 log "Installing remote desktop tools"
 retry arch-chroot /mnt pacman -Syu --needed --noconfirm remmina freerdp
