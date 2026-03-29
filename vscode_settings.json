@@ -18,5 +18,7 @@
   "js/ts.referencesCodeLens.showOnAllFunctions": true,
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "workbench.preferredLightColorTheme": "VS Code Dark",
+  "editor.fontSize": 16
 }
