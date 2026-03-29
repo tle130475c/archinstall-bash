@@ -1,5 +1,4 @@
 {
-  "window.titleBarStyle": "custom",
   "editor.rulers": [80, 120, 140],
   "workbench.iconTheme": "material-icon-theme",
   "editor.renderWhitespace": "all",
