@@ -47,6 +47,7 @@ install_extension angular.ng-template
 install_extension anthropic.claude-code
 install_extension bdavs.expect
 install_extension bmewburn.vscode-intelephense-client
+install_extension bradlc.vscode-tailwindcss
 install_extension celianriboulet.webvalidator
 install_extension charliermarsh.ruff
 install_extension christian-kohler.npm-intellisense
@@ -101,6 +102,7 @@ install_extension sonarsource.sonarlint-vscode
 install_extension streetsidesoftware.code-spell-checker
 install_extension tomoki1207.pdf
 install_extension tomwhite007.rename-angular-component
+install_extension usernamehw.errorlens
 install_extension vmware.vscode-boot-dev-pack
 install_extension vscjava.vscode-java-pack
 install_extension wayou.vscode-todo-highlight
