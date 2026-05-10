@@ -59,7 +59,7 @@ log "Creating partition layout"
 source ./create_lvm_on_luks_partition_layout.sh
 
 log "Installing essential packages via pacstrap"
-retry pacstrap /mnt base base-devel linux linux-headers linux-lts linux-lts-headers linux-zen linux-zen-headers linux-firmware man-pages man-db iptables-nft pipewire pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire wireplumber bash-completion nfs-utils gvim usbutils
+retry pacstrap /mnt base base-devel linux linux-headers linux-lts linux-lts-headers linux-zen linux-zen-headers linux-firmware man-pages man-db iptables pipewire pipewire-pulse pipewire-alsa alsa-utils gst-plugin-pipewire wireplumber bash-completion nfs-utils gvim usbutils
 
 log "Disabling makepkg debug"
 linum=$(arch-chroot /mnt sed -n "/^OPTIONS=(.*)$/=" /etc/makepkg.conf)
@@ -159,7 +159,7 @@ log "Creating UEFI boot entry"
 arch-chroot /mnt efibootmgr --create --disk /dev/$disk_name --part $esp_part_num --loader '\EFI\systemd\systemd-bootx64.efi' --label "Linux Boot Manager" --unicode
 
 log "Installing KVM and configuring libvirt"
-retry arch-chroot /mnt pacman -Syu --needed --noconfirm virt-manager qemu-full vde2 dnsmasq virt-viewer dmidecode edk2-ovmf iptables-nft swtpm qemu-hw-usb-host qemu-block-gluster qemu-block-iscsi
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm virt-manager qemu-full vde2 dnsmasq virt-viewer dmidecode edk2-ovmf iptables swtpm qemu-hw-usb-host qemu-block-gluster qemu-block-iscsi
 arch-chroot /mnt systemctl enable libvirtd.service
 libvirtd_conf_file="/etc/libvirt/libvirtd.conf"
 linum=$(arch-chroot /mnt sed -n "/^#unix_sock_group = \"libvirt\"$/=" $libvirtd_conf_file)
@@ -186,7 +186,7 @@ retry arch-chroot /mnt pacman -Syu --needed --noconfirm pipewire pipewire-audio 
 # arch-chroot /mnt systemctl enable thermald.service
 
 log "Installing GNOME Desktop Environment"
-retry arch-chroot /mnt pacman -Syu --needed --noconfirm baobab eog evince file-roller gdm gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-font-viewer gnome-keyring gnome-screenshot gnome-shell-extensions gnome-system-monitor gnome-console gnome-themes-extra gnome-video-effects nautilus sushi gnome-tweaks totem xdg-user-dirs-gtk gnome-usage endeavour dconf-editor gnome-shell-extension-appindicator alacarte gnome-text-editor gnome-sound-recorder seahorse gnome-browser-connector xdg-desktop-portal xdg-desktop-portal-gnome gnome-disk-utility libappindicator transmission-gtk power-profiles-daemon gvfs-smb gvfs-google gvfs-mtp gvfs-nfs gnome-logs evolution evolution-ews evolution-on gnome-software gnome-remote-desktop gnome-characters
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm baobab eog evince file-roller gdm gnome-calculator gnome-calendar gnome-clocks gnome-color-manager gnome-control-center gnome-font-viewer gnome-keyring gnome-screenshot gnome-shell-extensions gnome-system-monitor gnome-console gnome-themes-extra gnome-video-effects nautilus sushi gnome-tweaks totem xdg-user-dirs-gtk gnome-usage endeavour dconf-editor gnome-shell-extension-appindicator alacarte gnome-text-editor gnome-sound-recorder seahorse gnome-browser-connector xdg-desktop-portal xdg-desktop-portal-gnome gnome-disk-utility libappindicator transmission-gtk power-profiles-daemon gvfs-smb gvfs-goa gvfs-mtp gvfs-nfs gnome-logs evolution evolution-ews evolution-on gnome-software gnome-remote-desktop gnome-characters
 arch-chroot /mnt systemctl enable gdm.service
 arch-chroot /mnt systemctl enable bluetooth.service
 run_command_as_user "mkdir -p /home/$username/.config/environment.d"
@@ -220,7 +220,7 @@ retry arch-chroot /mnt pacman -Syu --needed --noconfirm torbrowser-launcher fire
 retry_as_user "yay -Syu --needed --noconfirm google-chrome"
 
 log "Installing general tools"
-retry arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools 7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors exfatprogs pdftk texlive texlive-lang gptfdisk kio5-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins cdrtools gparted lftp
+retry arch-chroot /mnt pacman -Syu --needed --noconfirm keepassxc expect pacman-contrib dosfstools 7zip unarchiver bash-completion flatpak tree archiso rclone rsync lm_sensors exfatprogs pdftk texlive texlive-lang gptfdisk kio-extras smartmontools ddcutil proton-vpn-gtk-app libreoffice-fresh calibre kolourpaint vlc vlc-plugins-all gst-libav gst-plugins-good gst-plugins-ugly gst-plugins-bad obs-studio inkscape gimp kdenlive frei0r-plugins cdrtools gparted lftp
 retry_as_user "yay -Syu --needed --noconfirm ventoy-bin virtio-win"
 
 log "Installing remote desktop tools"
