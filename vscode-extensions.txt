@@ -3,6 +3,7 @@ anthropic.claude-code
 bdavs.expect
 bmewburn.vscode-intelephense-client
 bradlc.vscode-tailwindcss
+cedar-policy.vscode-cedar
 celianriboulet.webvalidator
 charliermarsh.ruff
 christian-kohler.npm-intellisense
@@ -16,9 +17,8 @@ eamodio.gitlens
 editorconfig.editorconfig
 esbenp.prettier-vscode
 foxundermoon.shell-format
-github.copilot
-github.copilot-chat
 github.remotehub
+github.vscode-github-actions
 github.vscode-pull-request-github
 gruntfuggly.todo-tree
 humao.rest-client
@@ -41,6 +41,7 @@ ms-toolsai.jupyter
 ms-vscode-remote.vscode-remote-extensionpack
 ms-vscode.cpptools-extension-pack
 ms-vscode.live-server
+ms-vscode.powershell
 ms-vscode.vscode-node-azure-pack
 msjsdiag.vscode-react-native
 neo4j-extensions.neo4j-for-vscode
