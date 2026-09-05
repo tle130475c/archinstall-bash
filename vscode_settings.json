@@ -6,9 +6,11 @@
   "git.confirmSync": false,
   "git.autofetch": true,
   "git.allowForcePush": true,
+  "git.confirmForcePush": false,
   "java.referencesCodeLens.enabled": true,
   "java.configuration.updateBuildConfiguration": "automatic",
   "workbench.startupEditor": "none",
+  "workbench.editor.empty.hint": "hidden",
   "redhat.telemetry.enabled": false,
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -19,5 +21,11 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "editor.fontSize": 16
+  "editor.fontSize": 16,
+  "security.workspace.trust.untrustedFiles": "open",
+  "python.terminal.useEnvFile": true,
+  "makefile.configureOnOpen": true,
+  "docker.extension.enableComposeLanguageServer": false,
+  "azureResourceGroups.groupBy": "resourceGroup",
+  "vscode-edge-devtools.webhintInstallNotification": true
 }
